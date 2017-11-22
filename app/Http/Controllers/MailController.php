@@ -29,7 +29,8 @@ class MailController extends Controller
                 }
 
                 $email = new EmailFormUsed($from, $subject, $message);
-                Mail::to('christoph.stach@gmail.com')->send($email);
+                Mail::to('christoph.stach@gmail.com')
+                    ->send($email);
 
                 return response()->json(['data' => [
                     'from' => $from,

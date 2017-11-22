@@ -47,6 +47,8 @@ class EmailFormUsed extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.email_form_used');
+        return $this
+            ->subject('Email form used: ' . $this->theEmailSubject)
+            ->view('emails.email_form_used');
     }
 }
