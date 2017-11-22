@@ -16,34 +16,33 @@ class MailController extends Controller
      */
     public function sendToChristophStach(Request $request)
     {
-        header('Access-Control-Allow-Origin: http://localhost:4200');
-        $headers = [
-            'Access-Control-Allow-Origin' => 'http://localhost:4200',
-            'test' => 'test123'
-        ];
         try {
-            $from = $request->input('from');
-            $subject = $request->input('subject');
-            $message = $request->input('message');
-
-            if (!$from || !$subject || !$message) {
+            if (!$request->has('from') || !$request->has('subject') || !$request->has('message')) {
                 throw new \Exception('Not all required fields were provided!');
+            } else {
+                $from = $request->input('from');
+                $subject = $request->input('subject');
+                $message = $request->input('message');
+
+                if (!$from || !$subject || !$message) {
+                    throw new \Exception('Some fields are empty!');
+                }
+
+                $email = new EmailFormUsed($from, $subject, $message);
+                Mail::to('christoph.stach@gmail.com')->send($email);
+
+                return response()->json(['data' => [
+                    'from' => $from,
+                    'subject' => $subject,
+                    'message' => $message
+                ]], 200);
             }
-
-            $email = new EmailFormUsed($from, $subject, $message);
-            Mail::to('christoph.stach@gmail.com')->send($email);
-
-            return response()->json(['data' => [
-                'from' => $from,
-                'subject' => $subject,
-                'message' => $message
-            ]], 200, $headers);
         } catch (\Exception $exception) {
             return response()->json(['exception' => [
                 'type' => get_class($exception),
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
-            ]], 500, $headers);
+            ]], 500);
         }
     }
 }
